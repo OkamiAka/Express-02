@@ -16,7 +16,7 @@ const getUserById = (req, res) => {
   const id = parseInt(req.params.id);
 
   database
-    .query(`select * from users where id=${id}`)
+    .query(`select * from users where id=?`, [id])
     .then(([user]) => {
       if (user.length > 0) {
         res.status(200).json(user);
