@@ -30,7 +30,50 @@ const getUserById = (req, res) => {
     });
 };
 
+const postUser = (req, res) => {
+  const { firstname, lastname, email, city, language, hashedPassword } =
+    req.body;
+  database
+    .query(
+      "INSERT INTO users(firstname, lastname, email, city, language, hashedPassword) VALUES (?, ?, ?, ?, ?, ?)",
+      [firstname, lastname, email, city, language, hashedPassword]
+    )
+    .then(() => {
+      res.send(201);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error saving the user");
+    });
+};
+const updateUser = (req, res) => {
+  const { firstname, lastname, email, city, language, hashedPassword } =
+    req.body;
+  database
+    .query(
+      "UPDATE `users` SET `firstname`=?,`lastname`=?,`email`=?,`city`=?,`language`=?,`hashedPassword`=? WHERE `id`=?",
+      [
+        firstname,
+        lastname,
+        email,
+        city,
+        language,
+        hashedPassword,
+        req.params.id,
+      ]
+    )
+    .then(() => {
+      res.send(200);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error saving the user");
+    });
+};
+
 module.exports = {
   getUsers,
   getUserById,
+  updateUser,
+  postUser,
 };
