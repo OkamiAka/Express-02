@@ -16,7 +16,10 @@ const getUserById = (req, res) => {
   const id = parseInt(req.params.id);
 
   database
-    .query(`select * from users where id=?`, [id])
+    .query(
+      `select id, firstname, lastname, email, city, language from users where id = ?`,
+      [id]
+    )
     .then(([user]) => {
       if (user.length > 0) {
         res.status(200).json(user);
@@ -71,9 +74,27 @@ const updateUser = (req, res) => {
     });
 };
 
+const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
+  database
+    .query(`select * from users where email = ?`, [req.body.email])
+    .then(([user]) => {
+      if (user.length > 0) {
+        req.user = user[0];
+        next();
+      } else {
+        res.send(404);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(401).send(401);
+    });
+};
+
 module.exports = {
   getUsers,
   getUserById,
   updateUser,
   postUser,
+  getUserByEmailWithPasswordAndPassToNext,
 };

@@ -1,6 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 
+const { hashPassword, verifyPassword, verifyToken } = require("./auth");
 const app = express();
 
 app.use(express.json());
@@ -17,8 +18,13 @@ const movieHandlers = require("./movieHandlers");
 
 app.get("/api/users", movieHandlers.getUsers);
 app.get("/api/users/:id", movieHandlers.getUserById);
+app.post(
+  "/api/login",
+  movieHandlers.getUserByEmailWithPasswordAndPassToNext,
+  verifyPassword
+);
 
-const { hashPassword } = require("./auth.js");
+app.use(verifyToken);
 
 app.post("/api/users", hashPassword, movieHandlers.postUser);
 app.put("/api/users/:id", hashPassword, movieHandlers.updateUser);
